@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BitcoinBot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A0911;
+      --bg-soft: #12101B;
+      --panel: #1A1626;
+      --panel-2: #221C33;
+
+      --text: #F3EFFA;
+      --text-muted: #B8AFC9;
+      --text-dim: #6E6682;
+
+      --accent-violet: #6E5BFF;
+      --accent-blue: #3DA4FF;
+      --accent-mint: #7CF2D4;
+
+      --gold: #C89B3C;
+      --gold-light: #E0B85C;
+      --gold-shadow: #8A6428;
+      --bronze-deep: #4A3218;
+
+      /* mapped aliases for existing usage */
+      --btc: var(--gold-light);
+      --btc-dark: var(--gold);
+      --surface: var(--panel);
+      --surface2: var(--panel-2);
+      --border: rgba(200,155,60,0.18);
+      --muted: var(--text-muted);
+      --font: 'Space Grotesk', sans-serif;
+      --mono: 'Space Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(110,91,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(110,91,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Ambient glow blobs ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 40% at 20% 15%, rgba(110,91,255,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 35% at 80% 80%, rgba(61,164,255,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 35% 30% at 60% 30%, rgba(124,242,212,0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      gap: 2.5rem;
+    }
+
+    /* ── Logo / Symbol ── */
+    .btc-symbol {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%, var(--gold-light) 0%, var(--gold) 55%, var(--gold-shadow) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--bronze-deep);
+      box-shadow:
+        0 0 0 1px rgba(200,155,60,0.35),
+        0 0 40px rgba(200,155,60,0.20),
+        0 0 80px rgba(110,91,255,0.12);
+      animation: pulse 3s ease-in-out infinite;
+      user-select: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 1px rgba(200,155,60,0.35), 0 0 40px rgba(200,155,60,0.20), 0 0 80px rgba(110,91,255,0.12);
+      }
+      50% {
+        box-shadow: 0 0 0 1px rgba(224,184,92,0.55), 0 0 60px rgba(200,155,60,0.32), 0 0 120px rgba(110,91,255,0.18);
+      }
+    }
+
+    /* ── Hero text ── */
+    .hero {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.9rem;
+      border: 1px solid rgba(124,242,212,0.20);
+      border-radius: 50px;
+      background: rgba(124,242,212,0.06);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-mint);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-mint);
+      animation: blink 1.8s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.25; }
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--accent-violet) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text-muted);
+      font-weight: 300;
+      max-width: 480px;
+      line-height: 1.65;
+    }
+
+    /* ── Stats cards ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(110,91,255,0.14);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .card:hover {
+      background: var(--panel-2);
+      border-color: rgba(110,91,255,0.32);
+      box-shadow: 0 0 24px rgba(110,91,255,0.10);
+    }
+
+    .card-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .card-value {
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .card-sub {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* ── CTA button ── */
+    .cta-wrap {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-blue) 100%);
+      color: #fff;
+      box-shadow: 0 0 28px rgba(110,91,255,0.30);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 42px rgba(110,91,255,0.48);
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid rgba(110,91,255,0.22);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(110,91,255,0.50);
+      color: var(--accent-violet);
+      background: rgba(110,91,255,0.06);
+      transform: translateY(-2px);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .btc-symbol { width: 78px; height: 78px; font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Symbol -->
+    <div class="btc-symbol">₿</div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        System Online
+      </div>
+      <h1>Hello, <span>BitcoinBot</span></h1>
+      <p class="subtitle">
+        Your intelligent Bitcoin assistant, powered by Django.<br/>
+        Ready to analyze markets, answer questions, and track the chain.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="card">
+        <span class="card-label">Network</span>
+        <span class="card-value">Bitcoin</span>
+        <span class="card-sub">Mainnet · Active</span>
+      </div>
+      <div class="card">
+        <span class="card-label">Block Time</span>
+        <span class="card-value">~10 min</span>
+        <span class="card-sub">Target average</span>
+      </div>
+      <div class="card">
+        <span class="card-label">Supply</span>
+        <span class="card-value">21M</span>
+        <span class="card-sub">Hard cap · BTC</span>
+      </div>
+      <div class="card">
+        <span class="card-label">Status</span>
+        <span class="card-value" style="color:var(--accent-mint)">Online</span>
+        <span class="card-sub">Django 5 · Python</span>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="cta-wrap">
+      <a href="#" class="btn btn-primary">⚡ Launch Bot</a>
+      <a href="#" class="btn btn-ghost">View Docs →</a>
+    </div>
+
+    <p class="footer">BitcoinBot · Built with Django · El Salvador 🇸🇻</p>
+  </div>
+</body>
+</html>
