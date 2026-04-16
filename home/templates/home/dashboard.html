@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — BitBot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0911; --panel: #1A1626; --text: #F3EFFA;
+      --text-muted: #B8AFC9; --accent-violet: #6E5BFF;
+      --gold: #C89B3C; --gold-light: #E0B85C;
+      --font: 'Inter', sans-serif;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--font); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 1.5rem; padding: 2rem;
+    }
+    .welcome {
+      text-align: center;
+    }
+    .welcome .ring {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      font-size: 2.5rem;
+      box-shadow: 0 0 30px rgba(200,155,60,0.4);
+      margin-bottom: 1rem;
+    }
+    .welcome h1 { font-size: 1.8rem; font-weight: 700; color: var(--gold-light); }
+    .welcome p { color: var(--text-muted); margin-top: 0.4rem; font-size: 1rem; }
+    .card {
+      background: var(--panel); border: 1px solid #2D2540;
+      border-radius: 16px; padding: 1.5rem 2rem;
+      max-width: 460px; width: 100%; text-align: center;
+    }
+    .card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+    .btn-logout {
+      margin-top: 1rem; padding: 0.6rem 1.6rem;
+      background: transparent; border: 1px solid #2D2540;
+      border-radius: 8px; color: var(--text-muted);
+      cursor: pointer; font-size: 0.85rem; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    .btn-logout:hover { border-color: var(--accent-violet); color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="welcome">
+    <div class="ring">₿</div>
+    <h1>¡Hola, {{ nombre }}!</h1>
+    <p>Bienvenido a BitBot. Tu aventura Bitcoin está por comenzar.</p>
+  </div>
+
+  <div class="card">
+    <p>🚧 El mapa de niveles y el progreso están en construcción.<br>
+       Por ahora estás dentro — eso es lo que importa.</p>
+  </div>
+
+  <a href="{% url 'logout' %}" class="btn-logout">Cerrar sesión</a>
+</body>
+</html>

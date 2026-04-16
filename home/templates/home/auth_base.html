@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}BitBot{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #0A0911;
+      --bg-soft:       #12101B;
+      --panel:         #1A1626;
+      --panel-2:       #221C33;
+      --text:          #F3EFFA;
+      --text-muted:    #B8AFC9;
+      --text-dim:      #6E6682;
+      --accent-violet: #6E5BFF;
+      --accent-blue:   #3DA4FF;
+      --accent-mint:   #7CF2D4;
+      --gold:          #C89B3C;
+      --gold-light:    #E0B85C;
+      --font:  'Inter', 'Helvetica Neue', sans-serif;
+      --mono:  'Fragment Mono', 'Courier New', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-card {
+      background: var(--panel);
+      border: 1px solid #2D2540;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 60px rgba(110, 91, 255, 0.08);
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .auth-logo .logo-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light, #E0B85C));
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 0 24px rgba(200, 155, 60, 0.4);
+    }
+
+    .auth-logo h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold-light, #E0B85C);
+      letter-spacing: 1px;
+    }
+
+    .auth-logo p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1.4rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--bg-soft);
+      border: 1px solid #2D2540;
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent-violet);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1.4rem;
+      background: var(--accent-violet);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .error-msg {
+      background: rgba(255, 80, 80, 0.12);
+      border: 1px solid rgba(255, 80, 80, 0.3);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.85rem;
+      color: #ff7070;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .auth-link {
+      text-align: center;
+      margin-top: 1.2rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .auth-link a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-ring">₿</div>
+      <h1>BitBot</h1>
+      <p>Aprender Bitcoin nunca fue tan fácil</p>
+    </div>
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
