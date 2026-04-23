@@ -2,7 +2,7 @@ venv/
 __pycache__/
 *.pyc
 *.pyo
-db.sqlite3
+# db.sqlite3 intentionally tracked so Vercel has a migrated DB on deploy
 .env
 .DS_Store
 *.egg-info/
