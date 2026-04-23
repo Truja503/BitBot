@@ -1,0 +1,237 @@
+/* tutorial.css — Panel de tutorial BitAxe */
+/* Import en practica_bitaxe.html */
+
+.tp-panel {
+  position: fixed;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  width: min(520px, 94vw);
+  max-height: 75vh;
+  overflow-y: auto;
+  background: rgba(10,9,17,0.96);
+  border: 1px solid rgba(110,91,255,0.35);
+  border-radius: 18px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 0 60px rgba(110,91,255,0.15), 0 20px 60px rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-family: 'Inter', sans-serif;
+  color: #f0eeff;
+  animation: tpSlideIn 0.35s cubic-bezier(0.34,1.36,0.64,1);
+}
+
+@keyframes tpSlideIn {
+  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+
+.tp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.1rem 0;
+}
+
+.tp-step-counter {
+  font-size: 0.68rem;
+  font-family: 'Fragment Mono', monospace;
+  color: #6E5BFF;
+  letter-spacing: 0.08em;
+}
+
+.tp-close {
+  background: none;
+  border: none;
+  color: #6d6a90;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.tp-close:hover { color: #f0eeff; background: rgba(255,255,255,0.06); }
+
+.tp-content { padding: 0.5rem 1.2rem 0.75rem; }
+
+.tp-subtitle {
+  font-size: 0.7rem;
+  color: #6E5BFF;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.tp-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f0eeff;
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.tp-body {
+  font-size: 0.83rem;
+  color: #b8afc9;
+  line-height: 1.65;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.tp-extra { margin-top: 0.85rem; }
+
+.tp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.1rem 0.8rem;
+  border-top: 1px solid rgba(110,91,255,0.1);
+  gap: 0.5rem;
+}
+
+.tp-btn {
+  padding: 0.42rem 1rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(110,91,255,0.3);
+  background: rgba(110,91,255,0.12);
+  color: #a5b4fc;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.tp-btn:hover:not(:disabled) { background: rgba(110,91,255,0.25); color: #f0eeff; }
+.tp-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.tp-btn.tp-next {
+  background: linear-gradient(135deg, #7c3aed, #6366f1);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(110,91,255,0.3);
+}
+.tp-btn.tp-next:hover { filter: brightness(1.12); }
+
+.tp-dots { display: flex; gap: 0.3rem; }
+.tp-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(110,91,255,0.25);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tp-dot.active { background: #6E5BFF; transform: scale(1.3); }
+
+/* ── Settings Form ── */
+.tp-form { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.tp-form-title {
+  font-size: 0.75rem;
+  color: #6E5BFF;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tp-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.tp-field { display: flex; flex-direction: column; gap: 0.2rem; }
+.tp-field--full { grid-column: 1 / -1; }
+
+.tp-field label {
+  font-size: 0.65rem;
+  color: #6d6a90;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tp-input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(110,91,255,0.2);
+  border-radius: 7px;
+  padding: 0.35rem 0.6rem;
+  color: #f0eeff;
+  font-size: 0.78rem;
+  font-family: 'Fragment Mono', monospace;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.tp-input:focus { border-color: #6E5BFF; background: rgba(110,91,255,0.07); }
+
+.tp-hint {
+  font-size: 0.68rem;
+  color: #22c55e;
+  font-family: 'Fragment Mono', monospace;
+  min-height: 1rem;
+}
+
+.tp-save-btn {
+  margin-top: 0.35rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #15803d, #22c55e);
+  border: none;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+.tp-save-btn:hover:not(:disabled) { filter: brightness(1.1); }
+
+/* ── Metrics Grid ── */
+.tp-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.45rem;
+}
+
+.tp-metric-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(110,91,255,0.15);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.tp-metric-card:hover {
+  background: rgba(110,91,255,0.07);
+  border-color: rgba(110,91,255,0.35);
+}
+
+.tp-metric-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.15rem;
+}
+
+.tp-metric-val {
+  font-size: 1.15rem;
+  font-weight: 400;
+  font-family: 'Fragment Mono', monospace;
+  color: #f0eeff;
+}
+
+.tp-metric-unit {
+  font-size: 0.6rem;
+  color: #6d6a90;
+  margin-top: 0.05rem;
+}
+
+.tp-metric-desc {
+  font-size: 0.65rem;
+  color: #6d6a90;
+  margin-top: 0.3rem;
+  line-height: 1.4;
+  display: none;
+}
+.tp-metric-card:hover .tp-metric-desc { display: block; }
