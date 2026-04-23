@@ -120,5 +120,40 @@
     });
   </script>
 
+  <!-- ══ LANDSCAPE LOCK (mobile only) ══ -->
+  <div id="rotate-overlay" style="
+    display:none;
+    position:fixed;inset:0;z-index:9999;
+    background:#070711;
+    flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;
+    text-align:center;padding:2rem;
+  ">
+    <div style="font-size:3.5rem;animation:rotateHint 1.5s ease-in-out infinite;">📱</div>
+    <h2 style="font-size:1.3rem;font-weight:700;color:#f0eeff;">Rotate your device</h2>
+    <p style="font-size:0.9rem;color:#6d6a90;max-width:260px;line-height:1.6;">
+      This 3D practice is best experienced in <strong style="color:#a78bfa">landscape mode</strong>.<br>Turn your phone sideways to continue.
+    </p>
+    <style>
+      @keyframes rotateHint {
+        0%   { transform: rotate(0deg); }
+        40%  { transform: rotate(90deg); }
+        60%  { transform: rotate(90deg); }
+        100% { transform: rotate(0deg); }
+      }
+    </style>
+  </div>
+  <script>
+    (function() {
+      const overlay = document.getElementById('rotate-overlay');
+      function checkOrientation() {
+        const isMobile = window.innerWidth <= 900 && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        const isPortrait = window.innerHeight > window.innerWidth;
+        overlay.style.display = (isMobile && isPortrait) ? 'flex' : 'none';
+      }
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', checkOrientation);
+      checkOrientation();
+    })();
+  </script>
 </body>
 </html>
