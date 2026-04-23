@@ -1,7 +1,10 @@
 import os
 import re
+import json
 from django.shortcuts import render, redirect
-from django.http import StreamingHttpResponse, HttpResponse
+from django.http import StreamingHttpResponse, HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import Usuario
 
@@ -57,9 +60,176 @@ def logout_view(request):
 def dashboard(request):
     if "usuario_id" not in request.session:
         return redirect("login")
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+    except Usuario.DoesNotExist:
+        return redirect("logout")
+
+    # Refill automático si corresponde
+    u._refill_si_corresponde()
+
+    # Leaderboard: todos los usuarios ordenados por XP desc
+    todos = Usuario.objects.order_by('-xp', 'creado_en').values('id', 'nombre', 'xp', 'practica_3d_completada')
+    leaderboard = []
+    mi_posicion = 1
+    for i, uu in enumerate(todos, start=1):
+        lecciones = 6 if uu['practica_3d_completada'] else 0
+        leaderboard.append({
+            'pos':       i,
+            'nombre':    uu['nombre'],
+            'xp':        uu['xp'],
+            'lecciones': lecciones,
+            'es_yo':     uu['id'] == u.id,
+        })
+        if uu['id'] == u.id:
+            mi_posicion = i
+
+    # Barras de progreso por módulo (de 0 a 100)
+    nodo_pct           = 100 if u.practica_3d_completada else 0
+    nodo_lecciones     = 6 if u.practica_3d_completada else 0
+    nodo_status        = "Completado" if u.practica_3d_completada else "Bloqueado"
+    modulos_completados = 1 if u.practica_3d_completada else 0
+
     return render(request, "home/dashboard.html", {
-        "nombre": request.session.get("usuario_nombre", "Satoshi"),
+        "nombre":                u.nombre,
+        "corazones":             u.corazones,
+        "max_corazones":         u.MAX_CORAZONES,
+        "es_premium":            u.es_premium,
+        "segundos_refill":       u.segundos_para_refill(),
+        "xp":                    u.xp,
+        "practica_3d_completada": u.practica_3d_completada,
+        "lecciones":             u.lecciones_completadas,
+        "practicas":             u.practicas_completadas,
+        "nodo_pct":              nodo_pct,
+        "nodo_lecciones":        nodo_lecciones,
+        "nodo_status":           nodo_status,
+        "modulos_completados":   modulos_completados,
+        "leaderboard":           leaderboard,
+        "mi_posicion":           mi_posicion,
+        "total_usuarios":        len(leaderboard),
     })
+
+
+def practica_bitaxe(request):
+    if "usuario_id" not in request.session:
+        return redirect("login")
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        completada = getattr(u, 'practica_bitaxe_completada', False)
+    except Usuario.DoesNotExist:
+        completada = False
+    return render(request, "home/practica_bitaxe.html", {
+        "nombre":    request.session.get("usuario_nombre", "Satoshi"),
+        "completada": completada,
+    })
+
+
+def practica_umbrel(request):
+    if "usuario_id" not in request.session:
+        return redirect("login")
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        corazones = u.corazones
+        completada = u.practica_3d_completada
+    except Usuario.DoesNotExist:
+        corazones = 3
+        completada = False
+    return render(request, "home/practica_umbrel.html", {
+        "nombre": request.session.get("usuario_nombre", "Satoshi"),
+        "corazones": corazones,
+        "completada": completada,
+    })
+
+
+# ─── API: estado de corazones ─────────────────────────────────────────────────
+
+def api_estado(request):
+    """Retorna el estado actual del usuario (corazones + timer + premium)."""
+    if "usuario_id" not in request.session:
+        return JsonResponse({"error": "no autenticado"}, status=401)
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        u._refill_si_corresponde()
+        return JsonResponse({
+            "corazones":              u.corazones,
+            "max_corazones":          u.MAX_CORAZONES,
+            "segundos_refill":        u.segundos_para_refill(),
+            "es_premium":             u.es_premium,
+            "practica_3d_completada": u.practica_3d_completada,
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+
+
+@require_POST
+def api_perder_corazon(request):
+    """El frontend llama esto cuando el jugador comete un error."""
+    if "usuario_id" not in request.session:
+        return JsonResponse({"error": "no autenticado"}, status=401)
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        vivo = u.perder_corazon()
+        return JsonResponse({
+            "corazones":       u.corazones,
+            "game_over":       not vivo,
+            "segundos_refill": u.segundos_para_refill(),
+            "es_premium":      u.es_premium,
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+
+
+@require_POST
+def api_completar_practica(request):
+    """El frontend llama esto cuando se completa la práctica 3D."""
+    if "usuario_id" not in request.session:
+        return JsonResponse({"error": "no autenticado"}, status=401)
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        u.completar_practica_3d()
+        return JsonResponse({
+            "ok":                     True,
+            "practica_3d_completada": u.practica_3d_completada,
+            "corazones":              u.corazones,
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+
+
+@require_POST
+def api_reset_corazones(request):
+    """Resetea los corazones al máximo (debug / admin)."""
+    if "usuario_id" not in request.session:
+        return JsonResponse({"error": "no autenticado"}, status=401)
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        u.corazones = u.MAX_CORAZONES
+        u.corazones_vaciados_en = None
+        u.save(update_fields=['corazones', 'corazones_vaciados_en'])
+        return JsonResponse({"corazones": u.corazones})
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+
+
+@require_POST
+def api_activar_premium(request):
+    """
+    Activa el plan premium del usuario.
+    En producción aquí iría la verificación del pago (Stripe, etc.).
+    Por ahora acepta el flag para integración futura.
+    """
+    if "usuario_id" not in request.session:
+        return JsonResponse({"error": "no autenticado"}, status=401)
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        u.activar_premium()
+        return JsonResponse({
+            "ok":          True,
+            "es_premium":  u.es_premium,
+            "corazones":   u.corazones,
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "usuario no encontrado"}, status=404)
 
 
 # ─── Range-aware video streaming ────────────────────────────────────────────
