@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 4 — BitAxe VR Lab | BitBot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'home/css/tokens.css' %}" />
+  <link rel="stylesheet" href="{% static 'home/css/bitaxe.css' %}" />
+  <link rel="stylesheet" href="{% static 'home/css/tutorial.css' %}" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three":         "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- CANVAS -->
+  <canvas id="bitaxe-canvas"></canvas>
+
+  <!-- LOADING OVERLAY -->
+  <div id="bitaxe-loading" class="ba-loading">
+    <div class="ba-loading-content">
+      <div class="ba-loading-icon">⬡</div>
+      <div class="ba-loading-title">BitAxe Ultra 204</div>
+      <div class="ba-loading-sub">Loading 3D environment...</div>
+      <div class="ba-loading-track">
+        <div class="ba-loading-fill" id="baLoadFill"></div>
+      </div>
+      <div class="ba-loading-pct" id="baLoadPct">0%</div>
+    </div>
+  </div>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="top-bar__left">
+      <a href="{% url 'dashboard' %}" class="back-btn">← Dashboard</a>
+    </div>
+    <div class="top-bar__center">
+      <div class="user-pill">
+        👤 <strong>{{ nombre }}</strong>
+        {% if completada %} · <span style="color:#22c55e">✅ Completada</span>{% endif %}
+      </div>
+    </div>
+    <div class="top-bar__right">
+      <div class="hint-pill hint-interact">🖱 Orbit · Scroll zoom · [i] inspect · [w] wireframe</div>
+    </div>
+  </header>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-badge">
+      <span class="hud-label">Modo:</span>
+      <span class="hud-value" id="hudMode">🌐 Intro</span>
+    </div>
+    <div class="hud-badge">
+      <span class="hud-label">Práctica 4</span>
+      <span class="hud-value" style="color:#f97316">₿ BitAxe VR</span>
+    </div>
+  </div>
+
+  <!-- HOTSPOT INFO PANEL -->
+  <div class="hotspot-panel" id="hotspotPanel">
+    <h3 id="hotspotTitle">—</h3>
+    <p id="hotspotDesc">Haz clic en un componente para más información.</p>
+  </div>
+
+  <!-- BOTTOM TOOLBAR -->
+  <nav class="toolbar">
+    <button class="tb-btn inspect-btn" id="btnInspect">🔍 Inspect · [i]</button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn tutorial-btn" id="btnTutorial" onclick="setMode('setup_tutorial')">📋 Tutorial</button>
+    <button class="tb-btn mining-btn"   id="btnMining"  onclick="setMode('mining_dashboard')">⛏ Mining</button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn vr-btn" id="btnVR">🥽 Enter VR</button>
+  </nav>
+
+  <!-- THREE.JS APP -->
+  <script type="module">
+    import { init } from "{% static 'home/js/bitaxe/app.js' %}";
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        init(document.getElementById('bitaxe-canvas'));
+      });
+    });
+  </script>
+
+  <!-- UI LOGIC -->
+  <script>
+    // Hotspot info map
+    const HOTSPOT_INFO = {
+      asic:     { title: 'BM1366 ASIC',    desc: 'El cerebro del BitAxe. ASIC de 3nm fabricado por Bitmain. Hashrate: ~500 GH/s. Consume ~15W.' },
+      heatsink: { title: 'Heatsink',        desc: 'Disipador de calor pasivo de aluminio. Mantiene el ASIC por debajo de 65°C bajo carga total.' },
+      usbc:     { title: 'USB-C Power',     desc: 'Alimentación 5V/5A via USB-C PD. Compatible con cualquier cargador USB-C de 25W+.' },
+      oled:     { title: 'OLED Display',    desc: 'Pantalla OLED 0.96" SSD1306. Muestra hashrate, temperatura, shares y uptime en tiempo real.' },
+      esp32:    { title: 'ESP32-S3',        desc: 'Microcontrolador ESP32-S3 240MHz. Gestiona WiFi, OLED, API REST y comunicación con el ASIC.' },
+    };
+
+    window.addEventListener('hotspot:select', e => {
+      const { id } = e.detail;
+      const info = HOTSPOT_INFO[id];
+      if (!info) return;
+
+      const panel = document.getElementById('hotspotPanel');
+      document.getElementById('hotspotTitle').textContent = info.title;
+      document.getElementById('hotspotDesc').textContent  = info.desc;
+      panel.classList.add('visible');
+
+      // Auto-hide after 5s
+      clearTimeout(panel._timeout);
+      panel._timeout = setTimeout(() => panel.classList.remove('visible'), 5000);
+    });
+  </script>
+
+</body>
+</html>

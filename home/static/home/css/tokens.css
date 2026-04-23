@@ -1,0 +1,41 @@
+/* ─────────────────────────────────────────────
+   tokens.css — Design tokens globales de BitBot
+   Importar primero en cualquier hoja de estilos.
+───────────────────────────────────────────── */
+:root {
+  /* Fondos */
+  --bg:          #0A0911;
+  --bg-soft:     #12101B;
+  --panel:       #1A1626;
+  --panel-hover: #221D33;
+
+  /* Texto */
+  --text:        #F3EFFA;
+  --text-muted:  #B8AFC9;
+  --text-dim:    #6E6682;
+
+  /* Acentos */
+  --accent:      #6E5BFF;
+  --accent-blue: #3DA4FF;
+  --accent-mint: #7CF2D4;
+
+  /* Gold */
+  --gold:        #C89B3C;
+  --gold-light:  #E0B85C;
+  --gold-shadow: #8A6428;
+  --bronze-deep: #4A3218;
+
+  /* Estado */
+  --danger:      #FF5F5F;
+
+  /* Bordes */
+  --border:      rgba(110, 91, 255, 0.14);
+
+  /* Tipografía */
+  --font:        'Inter', 'Helvetica Neue', sans-serif;
+  --mono:        'Fragment Mono', 'Courier New', monospace;
+
+  /* Layout */
+  --nav-w:       240px;
+  --top-h:       64px;
+}

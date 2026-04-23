@@ -1,0 +1,312 @@
+/* bitaxe.css — BitAxe VR overlay styles */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0A0911;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  color: #F3EFFA;
+}
+
+#bitaxe-canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ── LOADING OVERLAY ── */
+.ba-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0A0911;
+}
+
+.ba-loading-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ba-loading-icon {
+  font-size: 3rem;
+  color: #6E5BFF;
+  filter: drop-shadow(0 0 20px #6E5BFF);
+  animation: ba-pulse 1.8s ease infinite;
+}
+
+@keyframes ba-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.92); }
+}
+
+.ba-loading-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #F3EFFA;
+  letter-spacing: 0.04em;
+}
+
+.ba-loading-sub {
+  font-size: 0.82rem;
+  color: #6d6a90;
+  font-family: 'Fragment Mono', monospace;
+}
+
+.ba-loading-track {
+  width: 260px;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.ba-loading-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #6E5BFF, #3DA4FF);
+  box-shadow: 0 0 10px #6E5BFF;
+  transition: width 0.2s ease;
+}
+
+.ba-loading-pct {
+  font-family: 'Fragment Mono', monospace;
+  font-size: 0.75rem;
+  color: #6E5BFF;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 1.2rem;
+  background: rgba(8,6,20,0.78);
+  border-bottom: 1px solid rgba(110,91,255,0.12);
+  backdrop-filter: blur(20px);
+  gap: 0.8rem;
+}
+
+.top-bar__left,
+.top-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top-bar__center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.top-bar a.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: #8884a8;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.top-bar a.back-btn:hover { background: rgba(255,255,255,0.10); color: #F3EFFA; }
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(110,91,255,0.10);
+  border: 1px solid rgba(110,91,255,0.20);
+  font-size: 0.75rem;
+  color: #a5a0cc;
+}
+
+.user-pill strong { color: #F3EFFA; }
+
+.hint-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  white-space: nowrap;
+}
+
+.hint-interact {
+  background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.25);
+  color: #a5b4fc;
+  animation: fadeOut 0.7s ease 10s forwards;
+}
+
+@keyframes fadeOut { to { opacity: 0; pointer-events: none; } }
+
+/* ── HUD ── */
+.hud {
+  position: fixed;
+  top: 3.2rem;
+  right: 1rem;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-end;
+}
+
+.hud-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(8,6,20,0.78);
+  border: 1px solid rgba(110,91,255,0.16);
+  backdrop-filter: blur(12px);
+  font-size: 0.72rem;
+  color: #8884a8;
+  font-family: 'Fragment Mono', monospace;
+}
+
+.hud-badge .hud-label { color: #6d6a90; }
+.hud-badge .hud-value { color: #a5a0cc; font-weight: 600; }
+
+/* ── BOTTOM TOOLBAR ── */
+.toolbar {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(8,6,20,0.84);
+  border: 1px solid rgba(110,91,255,0.18);
+  border-radius: 18px;
+  backdrop-filter: blur(22px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.tb-sep {
+  width: 1px;
+  height: 26px;
+  background: rgba(255,255,255,0.07);
+  margin: 0 0.05rem;
+  flex-shrink: 0;
+}
+
+.tb-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.38rem 0.85rem;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 0.77rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: filter 0.18s, transform 0.18s, background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.tb-btn:hover:not(:disabled) {
+  filter: brightness(1.18);
+  transform: translateY(-1px);
+}
+
+.tb-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.inspect-btn {
+  background: rgba(249,115,22,0.15);
+  border-color: rgba(249,115,22,0.32);
+  color: #fdba74;
+}
+
+.inspect-btn.active {
+  background: rgba(249,115,22,0.28);
+  border-color: #f97316;
+  color: #fff;
+}
+
+.tutorial-btn {
+  background: rgba(99,102,241,0.14);
+  border-color: rgba(99,102,241,0.28);
+  color: #a5b4fc;
+}
+
+.tutorial-btn.active {
+  background: rgba(99,102,241,0.28);
+  border-color: #6366f1;
+  color: #fff;
+}
+
+.mining-btn {
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.25);
+  color: #86efac;
+}
+
+.mining-btn.active {
+  background: rgba(34,197,94,0.25);
+  border-color: #22c55e;
+  color: #fff;
+}
+
+.vr-btn {
+  background: rgba(110,91,255,0.16);
+  border-color: rgba(110,91,255,0.35);
+  color: #b0a6ff;
+}
+
+.vr-btn:hover:not(:disabled) {
+  background: rgba(110,91,255,0.28);
+}
+
+/* ── HOTSPOT INFO PANEL ── */
+.hotspot-panel {
+  position: fixed;
+  bottom: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  min-width: 280px;
+  background: rgba(8,6,20,0.90);
+  border: 1px solid rgba(110,91,255,0.3);
+  border-radius: 14px;
+  padding: 0.85rem 1.2rem;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  font-size: 0.82rem;
+  color: #a8a4c4;
+  display: none;
+  text-align: center;
+}
+
+.hotspot-panel.visible { display: block; }
+.hotspot-panel h3 { font-size: 1rem; color: #F3EFFA; margin-bottom: 0.3rem; font-weight: 700; }
