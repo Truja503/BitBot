@@ -8,429 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:            #0A0911;
-      --bg-soft:       #12101B;
-      --panel:         #1A1626;
-      --text:          #F3EFFA;
-      --text-muted:    #B8AFC9;
-      --text-dim:      #6E6682;
-      --accent-violet: #6E5BFF;
-      --accent-blue:   #3DA4FF;
-      --accent-mint:   #7CF2D4;
-      --gold:          #C89B3C;
-      --gold-light:    #E0B85C;
-      --gold-shadow:   #8A6428;
-      --bronze-deep:   #4A3218;
-      --font:  'Inter', 'Helvetica Neue', sans-serif;
-      --mono:  'Fragment Mono', 'Courier New', monospace;
-    }
-
-    html { scroll-behavior: auto; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ════════════════════════════════════════
-       HEADER
-    ════════════════════════════════════════ */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      padding: 0 2.5rem;
-      height: 64px;
-      background: linear-gradient(180deg, rgba(10,9,17,0.90) 0%, rgba(10,9,17,0.60) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(110,91,255,0.14);
-    }
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: -16px; left: 0; right: 0; height: 16px;
-      background: linear-gradient(180deg, rgba(110,91,255,0.07) 0%, transparent 100%);
-      pointer-events: none;
-    }
-    .logo { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; user-select: none; }
-    .logo-icon {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: radial-gradient(circle at 38% 35%, var(--gold-light) 0%, var(--gold) 55%, var(--gold-shadow) 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--mono); font-size: 1rem; color: var(--bronze-deep);
-      box-shadow: 0 0 14px rgba(200,155,60,0.28), 0 0 28px rgba(110,91,255,0.10);
-    }
-    .logo-text { font-family: var(--mono); font-size: 1.05rem; letter-spacing: 0.08em; color: var(--text); }
-    .logo-text span { color: var(--gold-light); }
-    nav { display: flex; align-items: center; gap: 0.2rem; }
-    .nav-link {
-      position: relative; padding: 0.4rem 1rem;
-      font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-      text-decoration: none; border-radius: 8px;
-      transition: color 0.2s, background 0.2s;
-    }
-    .nav-link:hover  { color: var(--text); background: rgba(110,91,255,0.08); }
-    .nav-link.active { color: var(--accent-violet); }
-    .nav-link.active::after {
-      content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
-      width: 18px; height: 2px; border-radius: 2px;
-      background: var(--accent-violet); box-shadow: 0 0 8px rgba(110,91,255,0.55);
-    }
-    .header-actions { display: flex; align-items: center; gap: 0.6rem; justify-content: flex-end; }
-    .btn-login {
-      padding: 0.38rem 1.1rem; font-size: 0.85rem; font-weight: 500;
-      color: var(--text-muted); background: transparent;
-      border: 1px solid rgba(110,91,255,0.20); border-radius: 8px;
-      cursor: pointer; text-decoration: none;
-      transition: color 0.2s, border-color 0.2s, background 0.2s;
-    }
-    .btn-login:hover { color: var(--text); border-color: rgba(110,91,255,0.45); background: rgba(110,91,255,0.07); }
-    .btn-signup {
-      padding: 0.38rem 1.2rem; font-size: 0.85rem; font-weight: 600;
-      color: #fff; background: linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-blue) 100%);
-      border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
-      box-shadow: 0 0 18px rgba(110,91,255,0.28);
-      transition: box-shadow 0.2s, filter 0.2s, transform 0.18s;
-    }
-    .btn-signup:hover { filter: brightness(1.12); box-shadow: 0 0 28px rgba(110,91,255,0.42); transform: translateY(-1px); }
-
-    /* ════════════════════════════════════════
-       SINGLE SCROLL SCENE  (800vh total)
-       First half  → video 1 + stage-1 text
-       Second half → video 2 + stage-2 text
-    ════════════════════════════════════════ */
-    .scroll-scene {
-      height: 800vh;       /* 400vh × 2 stages */
-      position: relative;
-    }
-
-    .sticky-frame {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    /* ── Videos ── */
-    .hero-video {
-      position: absolute;
-      inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center center;
-      will-change: contents;
-    }
-    #video2 { opacity: 0; }   /* hidden until crossfade */
-
-    /* ── Overlays ── */
-    .overlay-base {
-      position: absolute; inset: 0;
-      background: rgba(10,9,17,0.18);
-      pointer-events: none;
-    }
-    .overlay-right {
-      position: absolute; inset: 0;
-      background: linear-gradient(100deg,
-        transparent 0%, transparent 32%,
-        rgba(10,9,17,0.52) 58%, rgba(10,9,17,0.78) 100%);
-      pointer-events: none;
-    }
-    .overlay-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(110,91,255,0.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(110,91,255,0.022) 1px, transparent 1px);
-      background-size: 56px 56px;
-      pointer-events: none;
-    }
-
-    /* Very subtle veil used during the crossfade between videos */
-    .transition-veil {
-      position: absolute; inset: 0;
-      background: var(--bg);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 5;
-      transition: none;
-    }
-
-    /* ════════════════════════════════════════
-       STAGE 1 TEXT LAYER
-    ════════════════════════════════════════ */
-    .hero-content {
-      position: absolute;
-      inset: 0;
-      padding-top: 64px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: end;
-      padding-left: 3.5rem;
-      padding-right: 3.5rem;
-      padding-bottom: 4.5rem;
-      gap: 2rem;
-      z-index: 10;
-    }
-
-    .hero-left { align-self: end; display: flex; flex-direction: column; gap: 0; }
-
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 0.45rem;
-      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--accent-mint); margin-bottom: 0.55rem;
-    }
-    .hero-eyebrow-dot {
-      width: 5px; height: 5px; border-radius: 50%; background: var(--accent-mint);
-      animation: blink 1.8s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-    .hero-wordmark {
-      font-family: var(--mono);
-      font-size: clamp(4.5rem, 11vw, 8.5rem);
-      font-weight: 400; line-height: 0.88; letter-spacing: -0.02em;
-      background: linear-gradient(135deg,
-        var(--gold-light) 0%, var(--gold) 35%,
-        var(--accent-violet) 70%, var(--accent-blue) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 0 38px rgba(110,91,255,0.20));
-      position: relative;
-    }
-    .hero-wordmark::after {
-      content: 'BITBOT';
-      position: absolute; inset: 0;
-      font-family: var(--mono); font-size: inherit; font-weight: 400;
-      letter-spacing: inherit; line-height: inherit;
-      background: linear-gradient(105deg,
-        transparent 35%, rgba(255,255,255,0.18) 48%,
-        rgba(255,255,255,0.36) 52%, transparent 65%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      background-size: 200% 100%; background-position: -100% 0;
-      animation: glare 4.5s ease-in-out infinite 1.5s;
-      pointer-events: none;
-    }
-    @keyframes glare {
-      0%,100% { background-position: -100% 0; }
-      40%,60%  { background-position: 200% 0; }
-    }
-    .hero-wordmark-mirror {
-      font-family: var(--mono);
-      font-size: clamp(4.5rem, 11vw, 8.5rem);
-      font-weight: 400; line-height: 0.88; letter-spacing: -0.02em;
-      background: linear-gradient(135deg,
-        var(--gold-light) 0%, var(--gold) 35%,
-        var(--accent-violet) 70%, var(--accent-blue) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      transform: scaleY(-1); display: block; margin-top: 3px;
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.14) 0%, transparent 60%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.14) 0%, transparent 60%);
-      pointer-events: none; user-select: none;
-    }
-
-    .hero-right {
-      align-self: center;
-      display: flex; flex-direction: column; gap: 1.4rem;
-      max-width: 420px; margin-left: auto;
-    }
-    .hero-divider {
-      width: 36px; height: 2px; border-radius: 2px;
-      background: linear-gradient(90deg, var(--accent-violet), var(--accent-blue));
-    }
-    .hero-subheadline {
-      font-size: clamp(0.9rem, 1.6vw, 1.02rem);
-      color: var(--text-muted); line-height: 1.72; font-weight: 300;
-    }
-    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-    .cta-primary {
-      padding: 0.65rem 1.6rem; font-size: 0.9rem; font-weight: 600;
-      color: #fff; background: linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-blue) 100%);
-      border: none; border-radius: 10px; cursor: pointer; text-decoration: none;
-      box-shadow: 0 0 24px rgba(110,91,255,0.30);
-      transition: filter 0.2s, box-shadow 0.2s, transform 0.18s;
-    }
-    .cta-primary:hover { filter: brightness(1.1); box-shadow: 0 0 36px rgba(110,91,255,0.45); transform: translateY(-2px); }
-    .cta-ghost {
-      padding: 0.65rem 1.4rem; font-size: 0.9rem; font-weight: 500;
-      color: var(--text-muted); background: transparent;
-      border: 1px solid rgba(110,91,255,0.20); border-radius: 10px;
-      cursor: pointer; text-decoration: none;
-      transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.18s;
-    }
-    .cta-ghost:hover { color: var(--accent-violet); border-color: rgba(110,91,255,0.45); background: rgba(110,91,255,0.06); transform: translateY(-2px); }
-
-    /* ════════════════════════════════════════
-       STAGE MID TEXT LAYER  (enters mid-v1, exits mid-v2)
-    ════════════════════════════════════════ */
-    .stage-mid-text {
-      position: absolute;
-      right: 3.5rem;
-      top: 50%;
-      transform: translateY(calc(-50% + 40px));
-      max-width: 460px;
-      z-index: 10;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .stage-mid-divider {
-      width: 36px; height: 2px; border-radius: 2px;
-      background: linear-gradient(90deg, var(--accent-violet), var(--accent-blue));
-      margin-bottom: 1.2rem;
-    }
-    .stage-mid-label {
-      display: block;
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--accent-mint); margin-bottom: 0.8rem;
-    }
-    .stage-mid-headline {
-      font-family: var(--mono);
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      font-weight: 400; line-height: 1.28; letter-spacing: -0.01em; color: var(--text);
-    }
-    .stage-mid-headline em {
-      font-style: normal;
-      background: linear-gradient(90deg, var(--accent-mint), var(--accent-blue));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .stage-mid-sub {
-      margin-top: 1rem;
-      font-size: clamp(0.85rem, 1.5vw, 0.95rem);
-      color: var(--text-muted); font-weight: 300; line-height: 1.7;
-    }
-
-    /* ════════════════════════════════════════
-       STAGE 2 TEXT LAYER  (final, end of v2)
-    ════════════════════════════════════════ */
-    .stage2-text {
-      position: absolute;
-      left: 3.5rem;
-      top: 30%;
-      transform: translateY(calc(-50% + 40px));
-      max-width: 480px;
-      z-index: 10;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .stage2-divider {
-      width: 36px; height: 2px; border-radius: 2px;
-      background: linear-gradient(90deg, var(--gold), var(--gold-light));
-      margin-bottom: 1.2rem;
-    }
-    .stage2-label {
-      display: block;
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem;
-    }
-    .stage2-headline {
-      font-family: var(--mono);
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      font-weight: 400; line-height: 1.28; letter-spacing: -0.01em; color: var(--text);
-    }
-    .stage2-headline em {
-      font-style: normal;
-      background: linear-gradient(90deg, var(--gold-light), var(--accent-violet));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .stage2-sub {
-      margin-top: 1rem;
-      font-size: clamp(0.85rem, 1.5vw, 0.95rem);
-      color: var(--text-muted); font-weight: 300; line-height: 1.7;
-    }
-    .stage2-cta { display: flex; margin-top: 1.6rem; gap: 0.75rem; }
-
-    /* ════════════════════════════════════════
-       SHARED CHROME
-    ════════════════════════════════════════ */
-    .scroll-hint {
-      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
-      opacity: 0.42; animation: floatHint 2.4s ease-in-out infinite;
-      pointer-events: none; user-select: none;
-      transition: opacity 0.5s ease; z-index: 20;
-    }
-    .scroll-hint span { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); }
-    .scroll-hint svg  { width: 18px; opacity: 0.7; }
-    @keyframes floatHint {
-      0%,100% { transform: translateX(-50%) translateY(0); }
-      50%     { transform: translateX(-50%) translateY(6px); }
-    }
-
-    .progress-bar {
-      position: absolute; bottom: 0; left: 0;
-      height: 2px; width: 0%;
-      background: linear-gradient(90deg, var(--accent-violet), var(--accent-blue));
-      box-shadow: 0 0 10px rgba(110,91,255,0.55);
-      pointer-events: none; z-index: 20;
-    }
-
-    .video-loader {
-      position: absolute; inset: 0;
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 50; transition: opacity 0.6s ease;
-    }
-    .video-loader.hidden { opacity: 0; pointer-events: none; }
-    .loader-ring {
-      width: 42px; height: 42px;
-      border: 2px solid rgba(110,91,255,0.18);
-      border-top-color: var(--accent-violet);
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ════════════════════════════════════════
-       RESPONSIVE
-    ════════════════════════════════════════ */
-    @media (max-width: 1024px) {
-      .hero-content { padding-left: 2rem; padding-right: 2rem; padding-bottom: 3rem; }
-      .hero-right   { max-width: 360px; }
-      .stage2-text  { right: 2rem; }
-    }
-    @media (max-width: 768px) {
-      header { padding: 0 1.2rem; grid-template-columns: auto 1fr auto; height: 56px; }
-      nav { display: none; }
-      .btn-login  { display: none; }
-      .btn-signup { padding: 0.32rem 0.9rem; font-size: 0.8rem; }
-
-      .hero-content {
-        grid-template-columns: 1fr; align-items: flex-end;
-        padding: 70px 1.4rem 2.5rem; gap: 1.2rem;
-      }
-      .hero-right { max-width: 100%; margin-left: 0; gap: 1rem; }
-      .overlay-right {
-        background: linear-gradient(180deg,
-          transparent 25%, rgba(10,9,17,0.55) 55%, rgba(10,9,17,0.88) 100%);
-      }
-      .overlay-grid { background-size: 36px 36px; }
-      .hero-cta { flex-direction: column; }
-      .cta-primary, .cta-ghost { text-align: center; padding: 0.7rem 1.2rem; }
-
-      .stage-mid-text,
-      .stage2-text {
-        right: 1.4rem; left: 1.4rem; max-width: 100%;
-        top: auto; bottom: 3rem;
-        transform: translateY(40px);   /* mobile: no vertical center */
-      }
-    }
-    @media (max-width: 480px) {
-      .logo-text { display: none; }
-      .hero-content { padding: 64px 1rem 2rem; }
-      .hero-wordmark-mirror { display: none; }
-      .hero-subheadline { font-size: 0.88rem; }
-      .cta-primary, .cta-ghost { font-size: 0.85rem; }
-      .stage-mid-text,
-      .stage2-text { right: 1rem; left: 1rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'home/css/tokens.css' %}" />
+  <link rel="stylesheet" href="{% static 'home/css/landing.css' %}" />
 </head>
 <body>
 
@@ -451,29 +30,23 @@
     </div>
   </header>
 
-  <!-- ══ ONE SCROLL SCENE — 800vh ══ -->
+  <!-- ══ SCROLL SCENE — 800vh ══ -->
   <div class="scroll-scene" id="scrollScene">
     <div class="sticky-frame" id="stickyFrame">
 
-      <!-- Loader -->
       <div class="video-loader" id="videoLoader">
         <div class="loader-ring"></div>
       </div>
 
-      <!-- Video 1 -->
-      <video class="hero-video" id="video1" src="/video/bg/" muted playsinline preload="auto"></video>
-      <!-- Video 2 (hidden until crossfade) -->
-      <video class="hero-video" id="video2" src="/video/v2/" muted playsinline preload="auto"></video>
+      <video class="hero-video" id="video1" src="{% url 'stream_video' %}"  muted playsinline preload="auto"></video>
+      <video class="hero-video" id="video2" src="{% url 'stream_video2' %}" muted playsinline preload="auto"></video>
 
-      <!-- Overlays -->
       <div class="overlay-base"></div>
       <div class="overlay-right"></div>
       <div class="overlay-grid"></div>
-
-      <!-- Crossfade veil -->
       <div class="transition-veil" id="veil"></div>
 
-      <!-- ── Stage 1 text ── -->
+      <!-- Stage 1 -->
       <div class="hero-content" id="s1Text">
         <div class="hero-left">
           <span class="hero-eyebrow" id="eyebrow">
@@ -485,7 +58,6 @@
             <div class="hero-wordmark-mirror" aria-hidden="true">BITBOT</div>
           </div>
         </div>
-
         <div class="hero-right" id="heroRight">
           <div class="hero-divider"></div>
           <p class="hero-subheadline">
@@ -499,7 +71,7 @@
         </div>
       </div>
 
-      <!-- ── Stage mid text (enters mid-v1, exits mid-v2) ── -->
+      <!-- Stage mid -->
       <div class="stage-mid-text" id="sMidText">
         <div class="stage-mid-divider"></div>
         <span class="stage-mid-label">Core Concept</span>
@@ -514,7 +86,7 @@
         </p>
       </div>
 
-      <!-- ── Stage 2 text ── -->
+      <!-- Stage 2 -->
       <div class="stage2-text" id="s2Text">
         <div class="stage2-divider"></div>
         <span class="stage2-label">Next Step</span>
@@ -529,219 +101,17 @@
         </p>
       </div>
 
-      <!-- Shared chrome -->
       <div class="scroll-hint" id="scrollHint">
         <span>Scroll</span>
         <svg viewBox="0 0 18 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M9 4v12M4 12l5 7 5-7" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="progress-bar" id="progressBar"></div>
+      <div class="scroll-progress-bar" id="progressBar"></div>
 
-    </div><!-- /sticky-frame -->
-  </div><!-- /scroll-scene -->
+    </div>
+  </div>
 
-  <script>
-  (function () {
-    'use strict';
-
-    /* ── Always start at top ───────────────────────── */
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    window.scrollTo(0, 0);
-
-    /* ── DOM ───────────────────────────────────────── */
-    const scene       = document.getElementById('scrollScene');
-    const video1      = document.getElementById('video1');
-    const video2      = document.getElementById('video2');
-    const veil        = document.getElementById('veil');
-    const s1Text      = document.getElementById('s1Text');
-    const eyebrow     = document.getElementById('eyebrow');
-    const wordmark    = document.getElementById('wordmark');
-    const heroRight   = document.getElementById('heroRight');
-    const sMidText    = document.getElementById('sMidText');
-    const s2Text      = document.getElementById('s2Text');
-    const hint        = document.getElementById('scrollHint');
-    const progressBar = document.getElementById('progressBar');
-    const loader      = document.getElementById('videoLoader');
-
-    /* ── State ─────────────────────────────────────── */
-    let dur1 = 0, dur2 = 0;
-    let ready1 = false, ready2 = false;
-    let lastT1 = -1, lastT2 = -1;
-    let raf1 = null, raf2 = null;
-
-    /* ── Tunables ──────────────────────────────────── */
-    const VIDEO_SPEED_1 = 1.5;    // video 1 scrub speed
-    const VIDEO_SPEED_2 = 1.25;   // video 2 scrub speed
-
-    // Global progress (0 = scene top, 1 = scene bottom)
-    // Video 1 → gp 0.00–0.50  |  Video 2 → gp 0.50–1.00
-
-    // Crossfade window
-    const XFADE_START = 0.44;
-    const XFADE_MID   = 0.48;
-    const XFADE_END   = 0.52;
-
-    // Stage-1 text (BITBOT + right panel): exits 0.18 → 0.36
-    const T1_WM_S     = 0.00;   // wordmark starts dropping immediately
-    const T1_RP_S     = 0.00;   // right panel starts fading
-    const T1_RP_E     = 0.36;   // right panel fully gone
-
-    // Stage-mid text: enters 0.25→0.38, exits 0.62→0.75
-    const MID_IN_S    = 0.2;
-    const MID_IN_E    = 0.38;
-    const MID_OUT_S   = 0.62;
-    const MID_OUT_E   = 0.65;
-
-    // Stage-2 final text: enters 0.82 → 0.94
-    const T2_ENTER_S  = 0.75;
-    const T2_ENTER_E  = 0.85;
-
-    /* ── Loader ────────────────────────────────────── */
-    function hideLoader() {
-      loader.classList.add('hidden');
-      setTimeout(() => { loader.style.display = 'none'; }, 700);
-    }
-    video1.addEventListener('canplay', () => { ready1 = true; if (ready2) hideLoader(); });
-    video2.addEventListener('canplay', () => { ready2 = true; if (ready1) hideLoader(); });
-    setTimeout(hideLoader, 3500);
-
-    /* ── Duration ──────────────────────────────────── */
-    video1.addEventListener('loadedmetadata', () => { dur1 = video1.duration; });
-    video2.addEventListener('loadedmetadata', () => { dur2 = video2.duration; video2.currentTime = 0; });
-
-    /* ── Scrub ─────────────────────────────────────── */
-    function scrub(vid, t, lastT, rafId) {
-      if (vid.readyState < 1 || Math.abs(vid.currentTime - t) < 0.016) return { lastT, rafId };
-      if (rafId) cancelAnimationFrame(rafId);
-      const id = requestAnimationFrame(() => { vid.currentTime = t; });
-      return { lastT: t, rafId: id };
-    }
-
-    /* ── Helpers ───────────────────────────────────── */
-    function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
-    function norm(v, lo, hi)  { return clamp((v - lo) / (hi - lo), 0, 1); }
-    function easeOut3(t)      { return 1 - Math.pow(1 - t, 3); }
-
-    /* ── Main scroll handler ───────────────────────── */
-    function onScroll() {
-      const scrollY    = window.scrollY;
-      const viewH      = window.innerHeight;
-      const sceneTop   = scene.offsetTop;
-      const scrollable = scene.offsetHeight - viewH;  // 800vh − 1vh
-
-      /* Global progress 0→1 */
-      const gp = clamp((scrollY - sceneTop) / scrollable, 0, 1);
-
-      /* Per-video local progress */
-      const p1 = norm(gp, 0,    0.50);   // 0→1 while video1 plays
-      const p2 = norm(gp, 0.50, 1.00);   // 0→1 while video2 plays
-
-      const isMobile  = window.innerWidth <= 768;
-      const dropScale = isMobile ? 0.5 : 1;
-
-      /* ── Scroll hint ── */
-      hint.style.opacity = gp > 0.03 ? '0' : '0.42';
-
-      /* ══ VIDEO SCRUBBING ════════════════════════ */
-      if (dur1 && ready1) {
-        const t1 = Math.min(dur1, p1 * dur1 * VIDEO_SPEED_1);
-        if (Math.abs(t1 - lastT1) > 0.01) {
-          const s = scrub(video1, t1, lastT1, raf1);
-          lastT1 = s.lastT; raf1 = s.rafId;
-        }
-      }
-      if (dur2 && ready2 && gp >= 0.50) {
-        const t2 = Math.min(dur2, p2 * dur2 * VIDEO_SPEED_2);
-        if (Math.abs(t2 - lastT2) > 0.01) {
-          const s = scrub(video2, t2, lastT2, raf2);
-          lastT2 = s.lastT; raf2 = s.rafId;
-        }
-      }
-
-      /* ══ CROSSFADE ══════════════════════════════ */
-      if (gp < XFADE_START) {
-        video1.style.opacity = '1';
-        video2.style.opacity = '0';
-        veil.style.opacity   = '0';
-      } else if (gp > XFADE_END) {
-        video1.style.opacity = '0';
-        video2.style.opacity = '1';
-        veil.style.opacity   = '0';
-      } else {
-        const xT     = norm(gp, XFADE_START, XFADE_END);
-        const veilIn = norm(gp, XFADE_START, XFADE_MID);
-        const veilO  = veilIn < 1
-          ? veilIn * 0.80
-          : (1 - norm(gp, XFADE_MID, XFADE_END)) * 0.80;
-        veil.style.opacity   = String(veilO);
-        video1.style.opacity = String(1 - xT);
-        video2.style.opacity = String(xT);
-      }
-
-      /* ══ STAGE 1 TEXT EXIT ══════════════════════
-         Wordmark: drops + fades driven by p1 (0→1 across entire v1)
-         Right panel: exits earlier — done by gp T1_RP_S→T1_RP_E
-      ════════════════════════════════════════════ */
-
-      /* Wordmark drops throughout v1 */
-      const wmDrop = p1 * 360 * dropScale;
-      const wmFade = clamp(1 - p1 * 3.5, 0, 1);
-      wordmark.style.transform = `translateY(${wmDrop}px)`;
-      wordmark.style.opacity   = String(wmFade);
-
-      /* Eyebrow fades faster */
-      eyebrow.style.opacity = String(clamp(1 - p1 * 5, 0, 1));
-
-      /* Right panel exits by gp=0.36 */
-      const rpT    = easeOut3(norm(gp, T1_RP_S, T1_RP_E));
-      const rpFade = clamp(1 - rpT, 0, 1);
-      const rpDrop = rpT * 60 * dropScale;
-      heroRight.style.opacity   = String(rpFade);
-      heroRight.style.transform = `translateY(${rpDrop}px)`;
-
-      /* Kill s1 layer entirely once past crossfade */
-      s1Text.style.opacity = gp >= XFADE_END ? '0' : null;
-
-      /* ══ STAGE MID TEXT ═════════════════════════
-         Enters: gp MID_IN_S → MID_IN_E  (mid video-1)
-         Exits:  gp MID_OUT_S → MID_OUT_E (mid video-2)
-      ════════════════════════════════════════════ */
-      let midT = 0;
-      if (gp < MID_IN_S) {
-        midT = 0;
-      } else if (gp <= MID_IN_E) {
-        midT = easeOut3(norm(gp, MID_IN_S, MID_IN_E));
-      } else if (gp < MID_OUT_S) {
-        midT = 1;
-      } else {
-        midT = clamp(1 - easeOut3(norm(gp, MID_OUT_S, MID_OUT_E)), 0, 1);
-      }
-
-      const midShift = (1 - midT) * 40;
-      sMidText.style.opacity      = String(midT);
-      sMidText.style.pointerEvents = midT > 0.05 ? 'auto' : 'none';
-      sMidText.style.transform    = isMobile
-        ? `translateY(${midShift}px)`
-        : `translateY(calc(-50% + ${midShift}px))`;
-
-      /* ══ STAGE 2 FINAL TEXT ═════════════════════
-         Enters: gp T2_ENTER_S → T2_ENTER_E (late in video-2)
-      ════════════════════════════════════════════ */
-      const t2T     = easeOut3(norm(gp, T2_ENTER_S, T2_ENTER_E));
-      const t2Shift = (1 - t2T) * 40;
-      s2Text.style.opacity       = String(t2T);
-      s2Text.style.pointerEvents = t2T > 0.05 ? 'auto' : 'none';
-      s2Text.style.transform     = isMobile
-        ? `translateY(${t2Shift}px)`
-        : `translateY(calc(-50% + ${t2Shift}px))`;
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();   // paint correct initial state
-
-  })();
-  </script>
-
+  <script src="{% static 'home/js/landing.js' %}"></script>
 </body>
 </html>
