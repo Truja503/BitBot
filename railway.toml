@@ -1,10 +1,5 @@
 [build]
 builder = "nixpacks"
 
-[build.nixpacksConfig]
-providers = ["python"]
-
 [deploy]
 startCommand = "gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
-restartPolicyType = "on-failure"
-restartPolicyMaxRetries = 3
