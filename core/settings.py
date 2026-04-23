@@ -20,6 +20,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'bit-bot-eta.vercel.app',
     '.vercel.app',
+    '.railway.app',
+    '.up.railway.app',
 ]
 
 USE_X_FORWARDED_HOST = True
@@ -27,6 +29,8 @@ USE_X_FORWARDED_HOST = True
 CSRF_TRUSTED_ORIGINS = [
     'https://bit-bot-eta.vercel.app',
     'https://*.vercel.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
 ]
 
 # ── Apps ──────────────────────────────────────────────────────────────────────
@@ -72,8 +76,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────────────────────
-# Vercel's /var/task is read-only — use /tmp for writable SQLite
-# Locally, keep db.sqlite3 in BASE_DIR as usual
+# Vercel: /var/task is read-only → use /tmp
+# Railway / local: use BASE_DIR/db.sqlite3 normally
 _IS_VERCEL = os.environ.get('VERCEL', '') == '1'
 
 DATABASES = {
@@ -82,6 +86,11 @@ DATABASES = {
         'NAME': Path('/tmp/db.sqlite3') if _IS_VERCEL else BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Railway injects PORT env var — also add to ALLOWED_HOSTS dynamically
+_RAILWAY_HOST = os.environ.get('RAILWAY_PUBLIC_DOMAIN', '')
+if _RAILWAY_HOST:
+    ALLOWED_HOSTS.append(_RAILWAY_HOST)
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
