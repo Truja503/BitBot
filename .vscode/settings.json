@@ -1,0 +1,36 @@
+{
+  // ── HTML ──────────────────────────────────────────────────────
+  // Django template tags ({% %} {{ }}) are not standard HTML — suppress errors
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+
+  // ── Django template support ────────────────────────────────────
+  // Treat .html files as Django-HTML so {% %} tags don't cause errors
+  "files.associations": {
+    "*.html": "django-html"
+  },
+
+  // ── JavaScript ────────────────────────────────────────────────
+  // 'three' and its addons are loaded from CDN — not in node_modules
+  "javascript.validate.enable": false,
+  "js/ts.implicitProjectConfig.checkJs": false,
+
+  // Tell ESLint/TS that these are browser globals
+  "typescript.preferences.importModuleSpecifierEnding": "auto",
+
+  // ── Python ────────────────────────────────────────────────────
+  "python.analysis.extraPaths": ["${workspaceFolder}"],
+
+  // ── Editor comfort ────────────────────────────────────────────
+  "editor.formatOnSave": false,
+  "editor.rulers": [120],
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/venv": true,
+    "**/.git": true
+  }
+}
