@@ -5,7 +5,7 @@
  *  - Section switching (nav)
  *  - Lives / hearts rendering
  *  - Avatar initials
- *  - Prácticas: nivel node selection + clase panel
+ *  - Practices: nivel node selection + clase panel
  *
  * Data for niveles is embedded by Django via a <script> block in
  * the template (window.BITBOT_DATA). This keeps template logic in
@@ -48,7 +48,7 @@ export function setInitial(el, name) {
   if (el) el.textContent = name.charAt(0).toUpperCase();
 }
 
-// ── Prácticas — Nodo selection ────────────────────────────────────
+// ── Practices — Nodo selection ───────────────────────────────────
 const ring  = () => document.getElementById('nodosRing');
 const panel = () => document.getElementById('clasePanel');
 let activeNodo = null;
@@ -87,11 +87,11 @@ function _buildClasePanel(data) {
   const p = panel();
   p.classList.remove('visible');
 
-  // Si la práctica 3D asociada fue completada, todas las clases se marcan como done
+  // If the associated 3D practice was completed, all classes are marked as done
   const allDone = data.practica3d && data.practica3dCompletada;
 
   let html = `
-    <button class="clase-back" data-action="reset">← volver</button>
+    <button class="clase-back" data-action="reset">← back</button>
     <span class="clase-nivel-tag ${data.tagClass}">${data.tag}</span>
     <div class="clase-titulo">${data.titulo.replace('\n', '<br>')}</div>
     <div class="clase-list">

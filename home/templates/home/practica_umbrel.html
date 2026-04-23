@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Práctica 1 — Umbrel Home | BitBot</title>
+  <title>Practice 1 — Umbrel Home | BitBot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'home/css/tokens.css' %}" />
@@ -417,27 +417,27 @@
       <div class="block-pill" id="blockPill">Block 945,689 · mempool.space</div>
     </div>
     <div class="top-bar__right">
-      <div class="hint-pill hint-click" id="hintClick">🖥 Haz clic en la pantalla</div>
-      <div class="hint-pill hint-esc"   id="hintEsc">ESC — salir del zoom</div>
+      <div class="hint-pill hint-click" id="hintClick">🖥 Click on the screen</div>
+      <div class="hint-pill hint-esc"   id="hintEsc">ESC — exit zoom</div>
     </div>
   </header>
 
   <!-- RIGHT INFO PANEL -->
-  <button class="info-toggle" id="infoToggle" title="Info del hardware" aria-label="Toggle info">i</button>
+  <button class="info-toggle" id="infoToggle" title="Hardware info" aria-label="Toggle info">i</button>
   <aside class="info-panel" id="infoPanel">
     <h4>Umbrel Home</h4>
-    <div class="info-row"><span class="info-icon">⬡</span><span class="info-text"><strong>Umbrel Home</strong><br>Servidor personal compacto. Corre UmbrelOS 1.2.</span></div>
-    <div class="info-row"><span class="info-icon">🔌</span><span class="info-text">Puerto <strong>USB-C</strong> (izq. trasero) — alimentación 5V/5A.</span></div>
-    <div class="info-row"><span class="info-icon">🌐</span><span class="info-text">Puerto <strong>Ethernet RJ-45</strong> (der. trasero) — conecta a tu router.</span></div>
-    <div class="info-row"><span class="info-icon">📺</span><span class="info-text">Puerto <strong>HDMI</strong> al monitor — accede vía <em>umbrel.local</em>.</span></div>
-    <div class="info-row"><span class="info-icon">₿</span><span class="info-text">Instala <strong>Bitcoin Core</strong> desde el App Store para correr tu nodo.</span></div>
-    <div class="info-row"><span class="info-icon">💾</span><span class="info-text"><strong>SSD NVMe 2TB</strong> — sincronización IBD ≈ 600 GB.</span></div>
+    <div class="info-row"><span class="info-icon">⬡</span><span class="info-text"><strong>Umbrel Home</strong><br>Compact personal server. Runs UmbrelOS 1.2.</span></div>
+    <div class="info-row"><span class="info-icon">🔌</span><span class="info-text"><strong>USB-C</strong> port (rear left) — 5V/5A power input.</span></div>
+    <div class="info-row"><span class="info-icon">🌐</span><span class="info-text"><strong>Ethernet RJ-45</strong> port (rear right) — connect to your router.</span></div>
+    <div class="info-row"><span class="info-icon">📺</span><span class="info-text"><strong>HDMI</strong> port to monitor — access via <em>umbrel.local</em>.</span></div>
+    <div class="info-row"><span class="info-icon">₿</span><span class="info-text">Install <strong>Bitcoin Core</strong> from the App Store to run your node.</span></div>
+    <div class="info-row"><span class="info-icon">💾</span><span class="info-text"><strong>NVMe SSD 2TB</strong> — IBD sync ≈ 600 GB.</span></div>
   </aside>
 
   <!-- SYNC PROGRESS OVERLAY -->
   <div class="sync-bar-wrap" id="syncBarWrap">
     <div class="sync-bar-label">
-      <span id="syncLabel">IBD · Descargando blockchain...</span>
+      <span id="syncLabel">IBD · Downloading blockchain...</span>
       <span id="syncPct">0.0%</span>
     </div>
     <div class="sync-bar-track"><div class="sync-bar-fill" id="syncFill"></div></div>
@@ -468,7 +468,7 @@
     </button>
 
     <button class="tb-btn explore-btn" id="btnExplore" onclick="focusCamera()" disabled>
-      🖥 Explorar
+      🖥 Explore
     </button>
 
     <div class="tb-sep"></div>
@@ -492,11 +492,11 @@
 
   <!-- UI LOGIC (classic script, runs after module bootstraps events) -->
   <script>
-    /* ── Django initial data ── */
+    /* ── Django initial data ─────────────────────────────────────── */
     const INITIAL_HEARTS    = {{ corazones }};
     const PRACTICA_YA_HECHA = {{ completada|yesno:"true,false" }};
 
-    /* ── State ── */
+    /* ── State ─────────────────────────────────────────────────── */
     let _ethOn = false, _pwrOn = false, _inFocus = false;
     let _hearts = INITIAL_HEARTS;
     let _gameOver = false;
@@ -796,7 +796,7 @@
       document.getElementById('syncLabel').textContent = `IBD · Block ${block.toLocaleString()} / 945,689`;
 
       if (pct >= 100) {
-        document.getElementById('syncLabel').textContent = '✓ Sincronización completa — Bitcoin Core activo';
+        document.getElementById('syncLabel').textContent = '✓ Sync complete — Bitcoin Core active';
         document.getElementById('syncFill').style.background = 'linear-gradient(90deg,#22c55e,#4ade80)';
         document.getElementById('syncFill').style.boxShadow  = '0 0 8px #22c55e';
       }

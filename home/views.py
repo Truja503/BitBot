@@ -21,9 +21,9 @@ def registro(request):
         nombre = request.POST.get("nombre", "").strip()
         password = request.POST.get("password", "")
         if not nombre or not password:
-            error = "Nombre y contraseña son obligatorios."
+            error = "Username and password are required."
         elif Usuario.objects.filter(nombre=nombre).exists():
-            error = "Ese nombre ya está en uso. Elige otro."
+            error = "That username is already taken. Choose another."
         else:
             u = Usuario(nombre=nombre)
             u.set_password(password)
@@ -46,9 +46,9 @@ def login_view(request):
                 request.session["usuario_nombre"] = u.nombre
                 return redirect("dashboard")
             else:
-                error = "Contraseña incorrecta."
+                error = "Incorrect password."
         except Usuario.DoesNotExist:
-            error = "Usuario no encontrado."
+            error = "User not found."
     return render(request, "home/login.html", {"error": error})
 
 
@@ -87,7 +87,7 @@ def dashboard(request):
     # Barras de progreso por módulo (de 0 a 100)
     nodo_pct           = 100 if u.practica_3d_completada else 0
     nodo_lecciones     = 6 if u.practica_3d_completada else 0
-    nodo_status        = "Completado" if u.practica_3d_completada else "Bloqueado"
+    nodo_status        = "Completed" if u.practica_3d_completada else "Locked"
     modulos_completados = 1 if u.practica_3d_completada else 0
 
     return render(request, "home/dashboard.html", {
@@ -146,7 +146,7 @@ def practica_umbrel(request):
 def api_estado(request):
     """Retorna el estado actual del usuario (corazones + timer + premium)."""
     if "usuario_id" not in request.session:
-        return JsonResponse({"error": "no autenticado"}, status=401)
+        return JsonResponse({"error": "not authenticated"}, status=401)
     try:
         u = Usuario.objects.get(pk=request.session["usuario_id"])
         u._refill_si_corresponde()
@@ -158,14 +158,14 @@ def api_estado(request):
             "practica_3d_completada": u.practica_3d_completada,
         })
     except Usuario.DoesNotExist:
-        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+        return JsonResponse({"error": "user not found"}, status=404)
 
 
 @require_POST
 def api_perder_corazon(request):
     """El frontend llama esto cuando el jugador comete un error."""
     if "usuario_id" not in request.session:
-        return JsonResponse({"error": "no autenticado"}, status=401)
+        return JsonResponse({"error": "not authenticated"}, status=401)
     try:
         u = Usuario.objects.get(pk=request.session["usuario_id"])
         vivo = u.perder_corazon()
@@ -176,14 +176,14 @@ def api_perder_corazon(request):
             "es_premium":      u.es_premium,
         })
     except Usuario.DoesNotExist:
-        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+        return JsonResponse({"error": "user not found"}, status=404)
 
 
 @require_POST
 def api_completar_practica(request):
     """El frontend llama esto cuando se completa la práctica 3D."""
     if "usuario_id" not in request.session:
-        return JsonResponse({"error": "no autenticado"}, status=401)
+        return JsonResponse({"error": "not authenticated"}, status=401)
     try:
         u = Usuario.objects.get(pk=request.session["usuario_id"])
         u.completar_practica_3d()
@@ -193,14 +193,14 @@ def api_completar_practica(request):
             "corazones":              u.corazones,
         })
     except Usuario.DoesNotExist:
-        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+        return JsonResponse({"error": "user not found"}, status=404)
 
 
 @require_POST
 def api_reset_corazones(request):
     """Resetea los corazones al máximo (debug / admin)."""
     if "usuario_id" not in request.session:
-        return JsonResponse({"error": "no autenticado"}, status=401)
+        return JsonResponse({"error": "not authenticated"}, status=401)
     try:
         u = Usuario.objects.get(pk=request.session["usuario_id"])
         u.corazones = u.MAX_CORAZONES
@@ -208,7 +208,7 @@ def api_reset_corazones(request):
         u.save(update_fields=['corazones', 'corazones_vaciados_en'])
         return JsonResponse({"corazones": u.corazones})
     except Usuario.DoesNotExist:
-        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+        return JsonResponse({"error": "user not found"}, status=404)
 
 
 @require_POST
@@ -219,7 +219,7 @@ def api_activar_premium(request):
     Por ahora acepta el flag para integración futura.
     """
     if "usuario_id" not in request.session:
-        return JsonResponse({"error": "no autenticado"}, status=401)
+        return JsonResponse({"error": "not authenticated"}, status=401)
     try:
         u = Usuario.objects.get(pk=request.session["usuario_id"])
         u.activar_premium()
@@ -229,7 +229,7 @@ def api_activar_premium(request):
             "corazones":   u.corazones,
         })
     except Usuario.DoesNotExist:
-        return JsonResponse({"error": "usuario no encontrado"}, status=404)
+        return JsonResponse({"error": "user not found"}, status=404)
 
 
 # ─── Range-aware video streaming ────────────────────────────────────────────
