@@ -103,10 +103,11 @@ def dashboard(request):
         "nodo_pct":              nodo_pct,
         "nodo_lecciones":        nodo_lecciones,
         "nodo_status":           nodo_status,
-        "modulos_completados":   modulos_completados,
-        "leaderboard":           leaderboard,
-        "mi_posicion":           mi_posicion,
-        "total_usuarios":        len(leaderboard),
+        "modulos_completados":    modulos_completados,
+        "leaderboard":            leaderboard,
+        "mi_posicion":            mi_posicion,
+        "total_usuarios":         len(leaderboard),
+        "node_class_completada":  u.node_class_completada,
     })
 
 
@@ -241,8 +242,9 @@ CHUNK = 1024 * 512  # 512 KB
 VIDEO_DIR = os.path.join(os.path.dirname(__file__), "static", "home", "video")
 
 _VIDEOS = {
-    "bg":    "Bg-video-scrub.mp4",
-    "video2": "Video2-scrub.mp4",
+    "bg":         "Bg-video-scrub.mp4",
+    "video2":     "Video2-scrub.mp4",
+    "node_class": "Node_Class.mp4",
 }
 
 
@@ -296,3 +298,41 @@ def stream_video(request):
 
 def stream_video2(request):
     return _serve_video(request, _VIDEOS["video2"])
+
+
+def stream_node_class(request):
+    return _serve_video(request, _VIDEOS["node_class"])
+
+
+# ─── Node Class lesson ──────────────────────────────────────────────────────
+
+def node_class(request):
+    authenticated = "usuario_id" in request.session
+    already_completed = False
+    if authenticated:
+        try:
+            u = Usuario.objects.get(pk=request.session["usuario_id"])
+            already_completed = u.node_class_completada
+        except Usuario.DoesNotExist:
+            pass
+    return render(request, "home/node_class.html", {
+        "authenticated":    authenticated,
+        "already_completed": already_completed,
+    })
+
+
+@require_POST
+def api_completar_node_class(request):
+    """El frontend llama esto cuando el usuario termina el video de Node Class."""
+    if "usuario_id" not in request.session:
+        return JsonResponse({"error": "not authenticated"}, status=401)
+    try:
+        u = Usuario.objects.get(pk=request.session["usuario_id"])
+        u.completar_node_class()
+        return JsonResponse({
+            "ok":                   True,
+            "node_class_completada": u.node_class_completada,
+            "xp":                   u.xp,
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "user not found"}, status=404)

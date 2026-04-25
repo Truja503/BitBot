@@ -10,12 +10,14 @@ class Usuario(models.Model):
     corazones_vaciados_en   = models.DateTimeField(null=True, blank=True)   # cuando llegaron a 0
     es_premium              = models.BooleanField(default=False)
     practica_3d_completada  = models.BooleanField(default=False)
+    node_class_completada   = models.BooleanField(default=False)
     xp                      = models.IntegerField(default=0)
     creado_en               = models.DateTimeField(auto_now_add=True)
 
-    MAX_CORAZONES  = 5
-    REFILL_HORAS   = 24          # horas de espera para refill gratuito
-    XP_PRACTICA_3D = 200
+    MAX_CORAZONES   = 5
+    REFILL_HORAS    = 24          # horas de espera para refill gratuito
+    XP_PRACTICA_3D  = 200
+    XP_NODE_CLASS   = 50
 
     # ── helpers ──────────────────────────────────────────────────────
 
@@ -75,6 +77,12 @@ class Usuario(models.Model):
             self.practica_3d_completada = True
             self.xp += self.XP_PRACTICA_3D
             self.save(update_fields=['practica_3d_completada', 'xp'])
+
+    def completar_node_class(self):
+        if not self.node_class_completada:
+            self.node_class_completada = True
+            self.xp += self.XP_NODE_CLASS
+            self.save(update_fields=['node_class_completada', 'xp'])
 
     # ── progreso calculado ────────────────────────────────────────────
 

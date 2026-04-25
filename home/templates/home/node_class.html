@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is a Bitcoin Node? — BitBot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'home/css/tokens.css' %}" />
+  <link rel="stylesheet" href="{% static 'home/css/node_class.css' %}" />
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header class="nc-header">
+    <a href="{% url 'dashboard' %}" class="nc-back" title="Back to Dashboard">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 4L7 10l6 6"/>
+      </svg>
+    </a>
+    <div class="nc-header-center">
+      <span class="nc-module-tag">Theory · Module 1</span>
+      <span class="nc-lesson-title">What is a Bitcoin Node?</span>
+    </div>
+    <div class="nc-xp-badge">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polygon points="8,1 10,6 15,6 11,9.5 12.5,15 8,12 3.5,15 5,9.5 1,6 6,6"/>
+      </svg>
+      +50 XP
+    </div>
+  </header>
+
+  <!-- ══ VIDEO SECTION ══ -->
+  <main class="nc-main">
+    <div class="nc-video-wrapper" id="videoWrapper">
+
+      <!-- Video element -->
+      <video
+        class="nc-video"
+        id="nodeVideo"
+        src="{% url 'stream_node_class' %}"
+        preload="auto"
+        playsinline
+      ></video>
+
+      <!-- Custom controls overlay -->
+      <div class="nc-controls" id="controls">
+
+        <!-- Progress bar -->
+        <div class="nc-progress-area" id="progressArea">
+          <div class="nc-progress-track" id="progressTrack">
+            <div class="nc-progress-fill" id="progressFill"></div>
+            <div class="nc-progress-thumb" id="progressThumb"></div>
+          </div>
+          <div class="nc-time">
+            <span id="timeElapsed">0:00</span>
+            <span id="timeDuration">0:00</span>
+          </div>
+        </div>
+
+        <!-- Buttons row -->
+        <div class="nc-controls-row">
+          <div class="nc-controls-left">
+            <!-- Play/Pause -->
+            <button class="nc-ctrl-btn" id="playBtn" title="Play / Pause">
+              <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="iconPause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+            </button>
+            <!-- Rewind 10s -->
+            <button class="nc-ctrl-btn nc-ctrl-btn--sm" id="rewindBtn" title="Rewind 10s">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/>
+                <text x="8" y="16" fill="currentColor" stroke="none" font-size="6" font-family="Inter,sans-serif" font-weight="700">10</text>
+              </svg>
+            </button>
+            <!-- Volume -->
+            <button class="nc-ctrl-btn nc-ctrl-btn--sm" id="muteBtn" title="Mute / Unmute">
+              <svg id="iconVol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              </svg>
+              <svg id="iconMute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            </button>
+            <input class="nc-volume-slider" id="volSlider" type="range" min="0" max="1" step="0.02" value="1" />
+          </div>
+
+          <div class="nc-controls-right">
+            <!-- Playback speed -->
+            <button class="nc-ctrl-btn nc-speed-btn" id="speedBtn" title="Playback speed">1×</button>
+            <!-- Fullscreen -->
+            <button class="nc-ctrl-btn nc-ctrl-btn--sm" id="fullscreenBtn" title="Fullscreen">
+              <svg id="iconFs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>
+              </svg>
+              <svg id="iconFsExit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 0 2 2v3M16 21v-3a2 2 0 0 0 2-2h3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /nc-controls -->
+
+      <!-- Completion overlay -->
+      <div class="nc-complete-overlay" id="completeOverlay" style="display:none;">
+        <div class="nc-complete-card">
+          <div class="nc-complete-icon">⚡</div>
+          <h2 class="nc-complete-title">Lesson Complete!</h2>
+          <p class="nc-complete-sub">You watched the full video.</p>
+          <div class="nc-complete-xp">+50 XP</div>
+          <button class="nc-complete-btn" id="claimBtn">Claim & Continue →</button>
+        </div>
+      </div>
+
+    </div><!-- /nc-video-wrapper -->
+  </main>
+
+  <!-- Pass auth state to JS -->
+  <script>
+    window.NC_DATA = {
+      authenticated: {{ authenticated|lower }},
+      already_completed: {{ already_completed|lower }},
+      api_complete_url: "{% url 'api_completar_node_class' %}",
+      dashboard_url: "{% url 'dashboard' %}",
+      csrf_token: "{{ csrf_token }}",
+    };
+  </script>
+  <script src="{% static 'home/js/node_class.js' %}"></script>
+</body>
+</html>

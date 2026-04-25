@@ -39,7 +39,7 @@
       </div>
 
       <video class="hero-video" id="video1" src="{% url 'stream_video' %}"  muted playsinline preload="auto"></video>
-      <video class="hero-video" id="video2" src="{% url 'stream_video2' %}" muted playsinline preload="auto"></video>
+      <video class="hero-video" id="video2" src="{% url 'stream_video2' %}" muted playsinline preload="none"></video>
 
       <div class="overlay-base"></div>
       <div class="overlay-right"></div>
@@ -107,7 +107,8 @@
           <path d="M9 4v12M4 12l5 7 5-7" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="scroll-progress-bar" id="progressBar"></div>
+
+      <div class="scroll-progress-bar" id="progressBar" style="display:none;"></div>
 
     </div>
   </div>
