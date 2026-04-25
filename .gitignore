@@ -1,5 +1,9 @@
 venv/
 __pycache__/
+
+# Heavy original videos — keep only *_web.mp4 in repo
+home/static/home/video/Node_Class.mp4
+staticfiles/home/video/
 *.pyc
 *.pyo
 # db.sqlite3 intentionally tracked so Vercel has a migrated DB on deploy

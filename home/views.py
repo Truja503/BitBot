@@ -244,7 +244,7 @@ VIDEO_DIR = os.path.join(os.path.dirname(__file__), "static", "home", "video")
 _VIDEOS = {
     "bg":         "Bg-video-scrub.mp4",
     "video2":     "Video2-scrub.mp4",
-    "node_class": "Node_Class.mp4",
+    "node_class": "Node_Class_web.mp4",
 }
 
 
